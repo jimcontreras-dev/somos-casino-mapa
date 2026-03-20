@@ -491,8 +491,15 @@
                 minZoom: 5
             });
 
-            // Mostrar Perú completo ajustado al tamaño del contenedor
-            map.fitBounds([[-18.35, -81.33], [-0.04, -68.65]]);
+            // Mostrar Perú completo — invalidateSize() garantiza que el contenedor
+            // (especialmente dentro de un iframe) tenga sus dimensiones reales antes del fit
+            const PERU_BOUNDS = [[-18.35, -81.33], [-0.04, -68.65]];
+            map.setView([-9.19, -75.01], 5);
+
+            setTimeout(() => {
+                map.invalidateSize();
+                map.fitBounds(PERU_BOUNDS);
+            }, 200);
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
