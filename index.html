@@ -434,7 +434,6 @@
             { id: "bagdad", name: "BAGDAD", city: "Chiclayo", address: "Jr. Elias Aguirre 498", coords: [-6.771737, -79.840525], img: "https://i.imgur.com/tRuolWe.png", link: "https://www.facebook.com/SalaDeJuegosBagdad/" },
             { id: "balta", name: "BALTA SLOTS", city: "Chiclayo", address: "Av. Jose Balta 525", coords: [-6.773564, -79.838670], img: "https://i.imgur.com/Z9JZAr8.png", link: "https://www.facebook.com/salabaltaslots/" },
             { id: "damasco", name: "DAMASCO", city: "Tacna", address: "Av. San Martin 597", coords: [-18.012413, -70.248909], img: "https://i.imgur.com/XZNJoww.png", link: "https://casinodamasco.pe/" },
-            { id: "polo", name: "EL POLO SLOTS Y MESAS", city: "Lima", address: "Av. La Encalada 1415", coords: [-12.101447, -76.970214], img: "https://i.imgur.com/8OFeAkg.png", link: "https://www.google.com/maps/search/?api=1&query=El+Polo+Slots+y+Mesas,Surco,Lima,Peru" },
             { id: "excalibur", name: "EXCALIBUR", city: "Trujillo", address: "Jr. Francisco Pizarro 657", coords: [-8.109757, -79.026053], img: "https://i.imgur.com/xFifjPg.png", link: "https://casinoexcalibur.pe/#home" },
             { id: "gangas", name: "GANGAS", city: "Trujillo", address: "Jr. Gamarra 569", coords: [-8.111137, -79.026142], img: "https://i.imgur.com/vqbsC6E.png", link: "https://www.facebook.com/saladejuegosgangas/" },
             { id: "islatesoro", name: "ISLA DEL TESORO", city: "Tacna", address: "Av. San Martin 680", coords: [-18.011837, -70.248341], img: "https://i.imgur.com/geBSmWo.png", link: "https://www.casinoisladeltesoro.pe/" },
@@ -450,7 +449,8 @@
             { id: "solidgold", name: "SOLID GOLD-CHICLAYO", city: "Chiclayo", address: "Av. Federico Villarreal 115", coords: [-6.77115455629827, -79.84627903962853], img: "https://i.imgur.com/o5jdC1K.png", link: "https://www.facebook.com/profile.php?id=100063595539728" },
             { id: "star", name: "CASINO STAR", city: "Trujillo", address: "Jr. Orbegoso 554", coords: [-8.11223457098377, -79.02730855257511], img: "https://i.imgur.com/Rnb1OTd.png", link: "https://www.facebook.com/CasinoStarTrujillo/" },
             { id: "winandwin", name: "WIN & WIN", city: "Piura", address: "Calle Arequipa 673, piura", coords: [-5.195375153252828, -80.62744703914402], img: "", link: "https://www.facebook.com/casinowinandwin/" },
-            { id: "winmeier", name: "WIN MEIER SLOTS Y MESAS", city: "Chiclayo", address: "Av. Francisco Bolognesi 756", coords: [-6.775739414768282, -79.83791468851379], img: "https://i.imgur.com/7TCvaMe.png", link: "https://casinoswm.pe/#cyber" }
+            { id: "winmeier", name: "WIN MEIER SLOTS Y MESAS", city: "Chiclayo", address: "Av. Francisco Bolognesi 756", coords: [-6.775739414768282, -79.83791468851379], img: "https://i.imgur.com/7TCvaMe.png", link: "https://casinoswm.pe/#cyber" },
+            { id: "polo", name: "EL POLO SLOTS Y MESAS", city: "Lima", address: "Av. La Encalada 1415", coords: [-12.101447, -76.970214], img: "https://i.imgur.com/8OFeAkg.png", link: "https://www.google.com/maps/search/?api=1&query=El+Polo+Slots+y+Mesas,Surco,Lima,Peru" }
         ];
 
         // ─────────────────────────────────────────────
@@ -491,34 +491,16 @@
                 minZoom: 5
             });
 
-            const PERU_BOUNDS = [[-18.35, -81.33], [-0.04, -68.65]];
-
-            // Vista inicial de respaldo inmediata
+            // Centro y zoom fijo — no depende del tamaño del contenedor
             map.setView([-9.19, -75.01], 5);
 
-            // fitPeru recalcula el tamaño del contenedor y ajusta la vista
-            let fitted = false;
-            function fitPeru() {
-                map.invalidateSize();
-                map.fitBounds(PERU_BOUNDS);
-                fitted = true;
-            }
+            // invalidateSize({reset:true}) fuerza a Leaflet a repintar
+            // en el tamaño real del contenedor sin recalcular zoom
+            function fixSize() { map.invalidateSize({ reset: true }); }
 
-            // Estrategia 1: ResizeObserver — detecta cuando el contenedor
-            // tiene dimensiones reales (más fiable en iframes)
-            if (window.ResizeObserver) {
-                const ro = new ResizeObserver(() => {
-                    if (!fitted) { fitPeru(); ro.disconnect(); }
-                });
-                ro.observe(document.getElementById('map'));
-            }
-
-            // Estrategia 2: window.load (cuando todos los recursos están listos)
-            window.addEventListener('load', () => { if (!fitted) fitPeru(); });
-
-            // Estrategia 3: timeouts escalonados como último recurso
-            setTimeout(() => { if (!fitted) fitPeru(); }, 300);
-            setTimeout(() => { fitPeru(); }, 800);
+            setTimeout(fixSize, 150);
+            setTimeout(fixSize, 500);
+            window.addEventListener('load', fixSize);
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
