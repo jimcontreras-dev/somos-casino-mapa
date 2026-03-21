@@ -482,7 +482,7 @@
         // ─────────────────────────────────────────────
         // INICIALIZACIÓN DEL MAPA
         // ─────────────────────────────────────────────
-        window.addEventListener('load', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const peruBounds = L.latLngBounds(L.latLng(-18.5, -81.5), L.latLng(0.5, -68.5));
 
             const map = L.map('map', {
@@ -491,8 +491,8 @@
                 minZoom: 5
             });
 
-            map.setView([-9.19, -75.01], 5);
-            map.invalidateSize();
+            // Mostrar Perú completo ajustado al tamaño del contenedor
+            map.fitBounds([[-18.35, -81.33], [-0.04, -68.65]]);
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
