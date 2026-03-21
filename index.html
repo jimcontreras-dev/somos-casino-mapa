@@ -482,26 +482,17 @@
         // ─────────────────────────────────────────────
         // INICIALIZACIÓN DEL MAPA
         // ─────────────────────────────────────────────
-        document.addEventListener('DOMContentLoaded', () => {
-            // maxBounds se aplica DESPUÉS del setView inicial para evitar
-            // conflictos cuando el contenedor aún no tiene dimensiones (iframe)
+        window.addEventListener('load', () => {
             const peruBounds = L.latLngBounds(L.latLng(-18.5, -81.5), L.latLng(0.5, -68.5));
 
-            const map = L.map('map', { minZoom: 5 });
+            const map = L.map('map', {
+                maxBounds: peruBounds,
+                maxBoundsViscosity: 1.0,
+                minZoom: 5
+            });
 
             map.setView([-9.19, -75.01], 5);
-
-            // Forzar repintado y reposicionado correcto en cada intervalo
-            function fixView() {
-                map.invalidateSize();
-                map.setView([-9.19, -75.01], 5);
-            }
-
-            [100, 350, 700].forEach(ms => setTimeout(fixView, ms));
-            window.addEventListener('load', fixView);
-
-            // Aplicar límites de Perú después de que la vista esté estabilizada
-            setTimeout(() => map.setMaxBounds(peruBounds), 800);
+            map.invalidateSize();
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
